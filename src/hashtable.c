@@ -1,40 +1,8 @@
-#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define TABLE_SIZE 100000
-
-typedef struct Hashtable * Hashtable;
-typedef struct Entry * Entry;
-
-Hashtable ht_create(void);
-void ht_set(Hashtable ht, const char *key, const char *value);
-char * ht_get(Hashtable ht, const char *key);
-void ht_dump(Hashtable ht);
-
-static unsigned int hash(const char *key);
-static Entry ht_pair(const char *key, const char *value);
-
-int
-main(int argc, char **argv)
-{
-	Hashtable ht = ht_create();
-
-	ht_set(ht, "name1", "henrique");
-	ht_set(ht, "name2", "juliana");
-	ht_set(ht, "name3", "russian");
-	ht_set(ht, "name4", "doge");
-	ht_set(ht, "name5", "luke");
-	ht_set(ht, "name6", "haha");
-	ht_set(ht, "name7", "heitor");
-
-	ht_dump(ht);
-
-	printf("key 'name3': %s\n", ht_get(ht, "name3"));
-
-	return 0;
-}
+#include "hashtable.h"
 
 struct Entry {
 	char *key;
@@ -59,37 +27,6 @@ ht_create()
 	}
 
 	return ht;
-}
-
-static unsigned int
-hash(const char *key)
-{
-	unsigned long int value = 0;
-	unsigned int i = 0;
-	unsigned int key_len = strlen(key);
-
-	for (; i < key_len; i++) {
-		value = value * 37 + key[i];
-	}
-
-	value = value % TABLE_SIZE;
-
-	return value;
-}
-
-static Entry
-ht_pair(const char *key, const char *value)
-{
-	Entry entry = (Entry) malloc(sizeof(Entry) * 1);
-	entry->key = (char *) malloc(strlen(key) + 1);
-	entry->value = (char *) malloc(strlen(value) + 1);
-
-	strcpy(entry->key, key);
-	strcpy(entry->value, value);
-
-	entry->next = NULL;
-
-	return entry;
 }
 
 void
@@ -158,4 +95,35 @@ ht_dump(Hashtable ht)
 
 		printf("\n");
 	}
+}
+
+static unsigned int
+hash(const char *key)
+{
+	unsigned long int value = 0;
+	unsigned int i = 0;
+	unsigned int key_len = strlen(key);
+
+	for (; i < key_len; i++) {
+		value = value * 37 + key[i];
+	}
+
+	value = value % TABLE_SIZE;
+
+	return value;
+}
+
+static Entry
+ht_pair(const char *key, const char *value)
+{
+	Entry entry = (Entry) malloc(sizeof(Entry) * 1);
+	entry->key = (char *) malloc(strlen(key) + 1);
+	entry->value = (char *) malloc(strlen(value) + 1);
+
+	strcpy(entry->key, key);
+	strcpy(entry->value, value);
+
+	entry->next = NULL;
+
+	return entry;
 }
